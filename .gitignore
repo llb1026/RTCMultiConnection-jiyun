@@ -1,0 +1,9 @@
+.*.swp
+._*
+.DS_Store
+.git
+.idea
+cert
+node_modules
+package-lock.json
+logs.json

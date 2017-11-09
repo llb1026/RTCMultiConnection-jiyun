@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>RTCMultiConnection-JIYUN</title>
+        <link href="style.css" rel="stylesheet">
+    </head>
+    <body>
+        <h1 class="make-center">RTCMultiConnection Demo 입니다!</h1>
+
+        <hr />
+
+        <section class="make-center">
+            <input type="text" id="room-id" placeholder="Unique Room ID" autocorrect=off autocapitalize=off size=30>
+            <button id="open-or-join-room">Start</button>
+
+            <br>
+
+            <!-- 방 입장하기 전에는 채팅 및 나가기 버튼 비활성화 -->
+            <input type="text" id="input-text-chat" placeholder="Enter Text Chat" style="visibility: hidden">
+            <button id="share-file" style="visibility: hidden">Share File</button>
+
+            <br>
+
+            <button id="disconnect-room" style="visibility: hidden">Disconnect</button>
+
+            <div class="room-url" id="room-url"></div>
+
+            <div id="chat-container">
+                <div id="file-container"></div>
+                <div class="chat-output"></div>
+            </div>
+            <div id="videos-container"></div>
+        </section>
+
+        <!-- Script import -->
+        <script src="/dev/RTCMultiConnection.js"></script>
+        <script src="/dev/adapter.js"></script>
+        <script src="/dev/FileBufferReader.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/dev/getHTMLMediaElement.js"></script>
+
+        <!-- Client JavaScript Code -->
+        <script>
+            window.enableAdapter = true;  // adapter.js 활성화
+
+            /* UI Code Start */
+
+            // 방 입장 버튼
+            document.getElementById('open-or-join-room').onclick = function() {
+                disableInputButtons();
+                connection.openOrJoin(document.getElementById('room-id').value, function(isRoomExists, roomid) {
+                    if (!isRoomExists) {
+                        showRoomURL(roomid);
+                    }
+                });
+            };
+
+            // 방 나가기 버튼
+            document.getElementById('disconnect-room').onclick = function() {
+                this.disabled = true;
+
+                // 만약 방을 나가는 사람이 방을 만든 사람이면 전체 세션을 닫는다
+                if (connection.isInitiator) {
+                    connection.closeEntireSession(function() {
+                        document.querySelector('h1').innerHTML = 'Entire session has been closed.';
+                    });
+                } else {
+                    connection.close();
+                }
+            };
+
+            /* UI Code End */
+
+
+            /* File Sharing, Text Chat Code Start */
+
+            // 파일 공유(FileBufferReader.js)
+            document.getElementById('share-file').onclick = function() {
+                var fileSelector = new FileSelector();
+                fileSelector.selectSingleFile(function(file) {
+                    connection.send(file);
+                });
+            };
+
+            // 채팅창
+            document.getElementById('input-text-chat').onkeyup = function(e) {
+                if (e.keyCode != 13) return;  // 엔터 누르면 리턴
+
+                // removing trailing/leading whitespace
+                this.value = this.value.replace(/^\s+|\s+$/g, '');
+                if (!this.value.length) return;
+
+                connection.send(this.value);
+                appendDIV(this.value);
+                this.value = '';
+            };
+
+            var chatContainer = document.querySelector('.chat-output');
+
+            // 채팅문구를 화면에 표시
+            function appendDIV(event) {
+                var div = document.createElement('div');
+                div.innerHTML = (event.userid || connection.userid) + ': ' + (event.data || event);
+                chatContainer.insertBefore(div, chatContainer.firstChild);
+                div.tabIndex = 0;
+                div.focus();
+
+                document.getElementById('input-text-chat').focus();
+            }
+
+            /* File Sharing, Text Chat Code End */
+
+
+            /* RTCMultiConnection Code Start */
+
+            // 커넥션 기본 세팅
+            var connection = new RTCMultiConnection();  // constructor
+            connection.socketURL = '/';
+            connection.socketMessageEvent = 'audio-video-file-chat-demo';
+            connection.enableFileSharing = true;
+            connection.session = {
+                audio: true,
+                video: true,
+                data: true
+            };
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveAudio: true,
+                OfferToReceiveVideo: true
+            };
+
+            // 비디오 영상이 보여지는 부분 설정
+            connection.videosContainer = document.getElementById('videos-container');
+            connection.onstream = function (event) {
+                // video tag 기본 속성 지우기
+                event.mediaElement.removeAttribute('src');
+                event.mediaElement.removeAttribute('srcObject');
+
+                // 화면에 보여질 video tag 설정
+                var video = document.createElement('video');
+                video.controls = true;
+                // 로컬 비디오는 무음처리
+                if (event.type === 'local') {
+                    video.muted = true;
+                }
+                video.srcObject = event.stream;
+                // 비디오 화면비율 설정
+                var width = parseInt(connection.videosContainer.clientWidth / 2) - 30;
+                // 비디오 UI 설정
+                var mediaElement = getHTMLMediaElement(video, {
+                    title: event.userid,
+                    buttons: ['full-screen'],
+                    width: width,
+                    showOnMouseEnter: false
+                });
+                // 위 설정 적용
+                connection.videosContainer.appendChild(mediaElement);
+
+                setTimeout(function () {
+                    mediaElement.media.play();
+                }, 5000);
+
+                mediaElement.id = event.streamid;
+            };
+
+            connection.onstreamended = function (event) {
+                var mediaElement = document.getElementById(event.streamid);
+                if (mediaElement) {
+                    mediaElement.parentNode.removeChild(mediaElement);
+                }
+            };
+
+            // 커넥션 후 화면에 새로 보여지는 부분 변경
+            connection.onmessage = appendDIV;
+            connection.filesContainer = document.getElementById('file-container');
+
+            connection.onopen = function () {
+                // 비활성화되었던 파일공유와 채팅 버튼 보여지게 변경
+                document.getElementById('share-file').style.visibility = 'visible';
+                document.getElementById('input-text-chat').style.visibility = 'visible';
+                document.getElementById('disconnect-room').style.visibility = 'visible';
+                // 상단 메인문구 변경
+                document.querySelector('h1').innerHTML = connection.getAllParticipants().join(' ') + '와 연결되었습니다!';
+            };
+
+            // 누군가가 방을 나갔을 때 화면에 보여지는 부분 변경
+            connection.onclose = function () {
+                if (connection.getAllParticipants().length) {
+                    document.querySelector('h1').innerHTML = '계속 ' + connection.getAllParticipants().join(' ') + '와 연결되어 있습니다.';
+                } else {
+                    document.querySelector('h1').innerHTML = '나 혼자 남았네요...ㅠ';
+                }
+            };
+
+            // 모든 세션이 닫혔을 때 화면에 보여지는 부분 변경
+            connection.onEntireSessionClosed = function (event) {
+                // 파일공유와 채팅 버튼 다시 비활성화
+                document.getElementById('share-file').style.visibility = 'hidden';
+                document.getElementById('input-text-chat').style.visibility = 'hidden';
+                document.getElementById('disconnect-room').style.visibility = 'hidden';
+                // 방 입장 버튼 재활성화
+                document.getElementById('open-or-join-room').disabled = false;
+
+                connection.attachStreams.forEach(function (stream) {
+                    stream.stop();
+                });
+
+                if (connection.userid === event.userid) return;
+                document.querySelector('h1').innerHTML = 'Entire session has been closed by the moderator: ' + event.userid;
+            };
+
+            connection.onUserIdAlreadyTaken = function (useridAlreadyTaken, yourNewUserId) {
+                connection.join(useridAlreadyTaken);
+            };
+
+            function disableInputButtons() {
+                document.getElementById('room-id').disabled = true;
+                document.getElementById('open-or-join-room').disabled = true;
+            }
+
+            /* RTCMultiConnection Code End */
+
+
+            /* Room ID Handling Code Start */
+
+            // 방 URL 보여주는 부분
+            function showRoomURL(roomid) {
+                // 해시 URL
+                var roomHashURL = '#' + roomid;
+
+                // 화면에 링크 나타냄
+                var html = '<h2>고유한 방 코드: </h2>';
+                html += '<a href="' + roomHashURL + '"target="_blank">' + roomHashURL + '</a>';
+
+                var roomURLDiv = document.getElementById('room-url');
+                roomURLDiv.innerHTML = html;
+                roomURLDiv.style.display = 'block';
+            }
+
+            // 방 URL 관련된 부분인 것 같다
+            (function() {
+                var params = {},
+                    r = /([^&=]+)=?([^&]*)/g;
+
+                function d(s) {
+                    return decodeURIComponent(s.replace(/\+/g, ' '));
+                }
+                var match, search = window.location.search;
+                while (match = r.exec(search.substring(1)))
+                    params[d(match[1])] = d(match[2]);
+                window.params = params;
+            })();
+
+            // 방 코드 설정 부분
+            var roomid = '';
+            if (localStorage.getItem(connection.socketMessageEvent)) {
+                roomid = localStorage.getItem(connection.socketMessageEvent);
+            } else {
+                roomid = connection.token();
+            }
+
+            // 방 코드 화면에 보여주는 부분
+            document.getElementById('room-id').value = roomid;
+            document.getElementById('room-id').onkeyup = function () {
+                localStorage.setItem(connection.socketMessageEvent, this.value);
+            };
+
+            // 해시 URL 관련된 부분인 것 같다
+            var hashString = location.hash.replace('#', '');
+            if (hashString.length && hashString.indexOf('comment-') == 0) {
+                hashString = '';
+            }
+
+            var roomid = params.roomid;
+            if (!roomid && hashString.length) {
+                roomid = hashString;
+            }
+
+            // 방 코드 이용해서 커넥션하는 부분
+            if (roomid && roomid.length) {
+                document.getElementById('room-id').value = roomid;
+                localStorage.setItem(connection.socketMessageEvent, roomid);
+
+                // auto-join-room
+                (function reCheckRoomPresence() {
+                    connection.checkPresence(roomid, function(isRoomExists) {
+                        if (isRoomExists) {
+                            connection.join(roomid);
+                            return;
+                        }
+
+                        setTimeout(reCheckRoomPresence, 5000);
+                    });
+                })();
+
+                disableInputButtons();
+            }
+
+            /* Room ID Handling Code End */
+
+        </script>
+    </body>
+</html>
