@@ -3823,14 +3823,14 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
                 var div = helper.div;
 
                 // 다운로드 링크와 파일 미리보기를 띄우는 부분
-                // 이미지 파일 미리보기를 함께 띄우려면 <img src="' + file.url + '" title="' + file.name + '" style="max-width: 80%;"> 를 추가한다
-                // 이미지 이외의 파일 미리보기를 함께 띄우려면 <iframe src="' + file.url + '" title="' + file.name + '" style="width: 80%;border: 0;height: inherit;margin-top:1em;"></iframe> 를 추가한다
 
-                if (file.type.indexOf('image') != -1) {
-                    div.innerHTML = '<a href="' + file.url + '" download="' + file.name + '">Download <strong style="color:red;">' + file.name + '</strong></a>';
-                } else {
-                    div.innerHTML = '<a href="' + file.url + '" download="' + file.name + '">Download <strong style="color:red;">' + file.name + '</strong></a>';
-                }
+                // if (file.type.indexOf('image') != -1) {
+                //     div.innerHTML = '<a href="' + file.url + '" download="' + file.name + '">Download <strong style="color:red;">' + file.name + '</strong></a><br><img src="\' + file.url + \'" title="\' + file.name + \'" style="max-width: 80%;">';
+                // } else {
+                //     div.innerHTML = '<a href="' + file.url + '" download="' + file.name + '">Download <strong style="color:red;">' + file.name + '</strong></a><br><iframe src="\' + file.url + \'" title="\' + file.name + \'" style="width: 80%;border: 0;height: inherit;margin-top:1em;"></iframe>';
+                // }
+
+                div.innerHTML = '<a href="' + file.url + '" download="' + file.name + '">Download <strong style="color:red;">' + file.name + '</strong></a>';
             };
 
             function updateLabel(progress, label) {
