@@ -283,18 +283,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
             console.warn('socket.io 커넥션이 닫혔습니다');
         });
 
-        connection.socket.on('join-with-password', function(remoteUserId) {
-            connection.onJoinWithPassword(remoteUserId);
-        });
-
-        connection.socket.on('invalid-password', function(remoteUserId, oldPassword) {
-            connection.onInvalidPassword(remoteUserId, oldPassword);
-        });
-
-        connection.socket.on('password-max-tries-over', function(remoteUserId) {
-            connection.onPasswordMaxTriesOver(remoteUserId);
-        });
-
         connection.socket.on('user-disconnected', function(remoteUserId) {
             if (remoteUserId === connection.userid) {
                 return;
@@ -4221,10 +4209,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
                 connection.socket.emit('changed-uuid', connection.userid);
 
-                if (password) {
-                    connection.socket.emit('set-password', password);
-                }
-
                 connection.isInitiator = true;
 
                 if (isData(connection.session)) {
@@ -5343,18 +5327,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         connection.onExtraDataUpdated = function(event) {
             event.status = 'online';
             connection.onUserStatusChanged(event, true);
-        };
-
-        connection.onJoinWithPassword = function(remoteUserId) {
-            console.warn(remoteUserId, 'is password protected. Please join with password.');
-        };
-
-        connection.onInvalidPassword = function(remoteUserId, oldPassword) {
-            console.warn(remoteUserId, 'is password protected. Please join with valid password. Your old password', oldPassword, 'is wrong.');
-        };
-
-        connection.onPasswordMaxTriesOver = function(remoteUserId) {
-            console.warn(remoteUserId, 'is password protected. Your max password tries exceeded the limit.');
         };
 
         connection.getAllParticipants = function(sender) {

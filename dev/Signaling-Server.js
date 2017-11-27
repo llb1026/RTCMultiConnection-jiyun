@@ -1,7 +1,6 @@
 module.exports = function (app, socketCallback) {
     // 모든 소켓, 유저id, extra-data, 연결된 소켓들을 저장한다
     var io = require('socket.io');
-    var fs = require('fs');
     var userList = {};
     var isRoomExist = userList['room-id'];  // isRoomExist != null 로 검사할 수 있다
     var shiftedModerationControls = {};
@@ -61,7 +60,6 @@ module.exports = function (app, socketCallback) {
         var socketMessageEvent = params.msgEvent;   // socketMessageEvent 변수는 roomid를 담는 주머니가 된다
         var sessionid = params.sessionid;
         var autoCloseEntireSession = params.autoCloseEntireSession;
-        var passwordTries = 0;
 
         socket.userid = params.userid;
         appendUser(socket);
@@ -126,17 +124,6 @@ module.exports = function (app, socketCallback) {
             }
         });
 
-        // 비밀번호 설정 부분
-        socket.on('set-password', function(password) {
-            try {
-                if (userList[socket.userid]) {
-                    userList[socket.userid].password = password;
-                }
-            } catch (e) {
-                pushLogs('set-password', e);
-            }
-        });
-
         // 누군가와 연결이 끊겼을 때
         socket.on('disconnect-with', function(remoteUserId, callback) {
             try {
@@ -189,27 +176,6 @@ module.exports = function (app, socketCallback) {
         socket.on(socketMessageEvent, function (message, callback) {
             try {
                 if (message.remoteUserId && message.remoteUserId != 'system' && message.message.newParticipationRequest) {
-                    if (userList[message.remoteUserId] && userList[message.remoteUserId].password) {
-                        // 최대 비번입력 시도 횟수는 5
-                        if (passwordTries > 5) {
-                            socket.emit('password-max-tries-over', message.remoteUserId);
-                            return;
-                        }
-
-                        if (!message.password) {
-                            passwordTries++;
-                            socket.emit('join-with-password', message.remoteUserId);
-                            return;
-                        }
-
-                        // 비번 틀리면 시도 횟수 늘리고 재시도
-                        if (message.password != userList[message.remoteUserId].password) {
-                            passwordTries++;
-                            socket.emit('invalid-password', message.remoteUserId, message.password);
-                            return;
-                        }
-                    }
-
                     if (userList[message.remoteUserId]) {
                         joinRoom(message);
                         return;
