@@ -93,7 +93,7 @@ module.exports = function (app, socketCallback) {
             callback(userList[remoteUserId].extra);
         });
 
-        // 파일 전송과 관련된 부분
+        // UUID 변경
         socket.on('changed-uuid', function(newUserId, callback) {
             callback = callback || function() {};
 
@@ -124,7 +124,7 @@ module.exports = function (app, socketCallback) {
             }
         });
 
-        // 누군가와 연결이 끊겼을 때
+        // 누군가와 연결을 끊을 때
         socket.on('disconnect-with', function(remoteUserId, callback) {
             try {
                 if (userList[socket.userid] && userList[socket.userid].connectedWith[remoteUserId]) {
