@@ -22,19 +22,7 @@ app.listen(port, process.env.IP || '0.0.0.0', function (error) {
     console.log('========================================================\n');
 });
 
-require('./dev/Signaling-Server')(app, function (socket) {
-    var params = socket.handshake.query;
-
-    if (!params.socketCustomEvent) {
-        params.socketCustomEvent = 'custom-message';
-    }
-
-    socket.on(params.socketCustomEvent, function(message) {
-        try {
-            socket.broadcast.emit(params.socketCustomEvent, message);
-        } catch (e) {}
-    });
-});
+require('./dev/Signaling-Server')(app);
 
 // ===== 서버 켤 때 옵션 및 조건 =====
 function serverHandler(req, res) {

@@ -117,7 +117,7 @@
             // 커넥션 기본 세팅
             var connection = new RTCMultiConnection();  // constructor
             connection.socketURL = '/';
-            connection.socketMessageEvent = 'audio-video-file-chat-demo';
+            connection.socketMessageEvent = 'RTCMultiConnection-jiyun';
             connection.enableFileSharing = true;
             connection.session = {
                 audio: true,
@@ -253,11 +253,7 @@
 
             // 방 코드 설정 부분
             var roomid = '';
-            if (localStorage.getItem(connection.socketMessageEvent)) {
-                roomid = localStorage.getItem(connection.socketMessageEvent);
-            } else {
-                roomid = connection.token();
-            }
+            roomid = connection.token();
 
             // 방 코드 화면에 보여주는 부분
             document.getElementById('room-id').value = roomid;

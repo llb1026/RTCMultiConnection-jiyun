@@ -8,7 +8,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         parameters += '?userid=' + connection.userid;
         parameters += '&sessionid=' + connection.sessionid;
         parameters += '&msgEvent=' + connection.socketMessageEvent;
-        parameters += '&socketCustomEvent=' + connection.socketCustomEvent;
         parameters += '&autoCloseEntireSession=' + !!connection.autoCloseEntireSession;
 
         if (connection.session.broadcast === true) {
@@ -20,10 +19,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         if (connection.enableScalableBroadcast) {
             parameters += '&enableScalableBroadcast=true';
             parameters += '&maxRelayLimitPerUser=' + (connection.maxRelayLimitPerUser || 2);
-        }
-
-        if (connection.socketCustomParameters) {
-            parameters += connection.socketCustomParameters;
         }
 
         try {
@@ -1984,17 +1979,10 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
     }
 
     function fireEvent(obj, eventName, args) {
-        if (typeof CustomEvent === 'undefined') {
-            return;
-        }
-
         var eventDetail = {
             arguments: args,
             __exposedProps__: args
         };
-
-        var event = new CustomEvent(eventName, eventDetail);
-        obj.dispatchEvent(event);
     }
 
     function setHarkEvents(connection, streamEvent) {
@@ -5441,20 +5429,7 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
         connection.socketURL = '/'; // generated via config.json
         connection.socketMessageEvent = 'RTCMultiConnection-Message'; // generated via config.json
-        connection.socketCustomEvent = 'RTCMultiConnection-Custom-Message'; // generated via config.json
         connection.DetectRTC = DetectRTC;
-
-        connection.setCustomSocketEvent = function(customEvent) {
-            if (customEvent) {
-                connection.socketCustomEvent = customEvent;
-            }
-
-            if (!connection.socket) {
-                return;
-            }
-
-            connection.socket.emit('set-custom-socket-event-listener', connection.socketCustomEvent);
-        };
 
         connection.getNumberOfBroadcastViewers = function(broadcastId, callback) {
             if (!connection.socket || !broadcastId || !callback) return;
@@ -5475,11 +5450,6 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
         connection.getUserMediaHandler = getUserMediaHandler;
         connection.multiPeersHandler = mPeer;
-        connection.setCustomSocketHandler = function(customSocketHandler) {
-            if (typeof SocketConnection !== 'undefined') {
-                SocketConnection = customSocketHandler;
-            }
-        };
 
         // default value is 15k because Firefox's receiving limit is 16k!
         // however 64k works chrome-to-chrome
