@@ -124,7 +124,7 @@ module.exports = function (app, socketCallback) {
             }
         });
 
-        // 누군가와 연결을 끊을 때
+        // 누군가와 연결을 끊을
         socket.on('disconnect-with', function(remoteUserId, callback) {
             try {
                 if (userList[socket.userid] && userList[socket.userid].connectedWith[remoteUserId]) {
@@ -163,7 +163,7 @@ module.exports = function (app, socketCallback) {
             }
         });
 
-        // 방이 이미 만들어져서 존재한지 아닌지 체크
+        // 유저가 현재 존재하는지 확인
         socket.on('check-presence', function(userid, callback) {
             if (!userList[userid]) {
                 callback(false, userid, {});
@@ -199,32 +199,6 @@ module.exports = function (app, socketCallback) {
                         extra: {},
                         maxParticipantsAllowed: params.maxParticipantsAllowed || 100
                     };
-                }
-
-                // 부재중이던 사람이 방에 들어오려고 시도할 때
-                if (message.message.newParticipationRequest) {
-                    var waitFor = 60 * 10; // 10분까지는 기다린다
-                    var invokedTimes = 0;
-                    (function repeater() {
-                        if (typeof socket == 'undefined' || !userList[socket.userid]) {
-                            return;
-                        }
-
-                        invokedTimes++;
-                        if (invokedTimes > waitFor) {
-                            socket.emit('user-not-found', message.remoteUserId);
-                            return;
-                        }
-
-                        if (userList[message.remoteUserId] && userList[message.remoteUserId].socket) {
-                            joinRoom(message);
-                            return;
-                        }
-
-                        setTimeout(repeater, 1000);
-                    })();
-
-                    return;
                 }
 
                 onMessageCallback(message);
@@ -287,7 +261,7 @@ module.exports = function (app, socketCallback) {
             socketCallback(socket);
         }
 
-        // ===== 채팅이나 파일이 아닌 데이터를 받는 onmessage 메소드의 콜백함수 =====
+        // ===== onmessage 콜백함수 =====
         function onMessageCallback(message) {
             try {
                 if (!userList[message.sender]) {
