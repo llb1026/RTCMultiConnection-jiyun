@@ -1,6 +1,8 @@
 (function() {
 
     function FileBufferReader() {
+        console.info('- FileBufferReader.js 내부 코드 실행됨 -');
+
         var fbr = this;
         var fbrHelper = new FileBufferReaderHelper();
 

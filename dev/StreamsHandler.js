@@ -1,5 +1,7 @@
 var StreamsHandler = (function() {
     function handleType(type) {
+        console.info('- StreamsHandler.js 내부의 handleType 함수 실행됨 -');
+
         if (!type) {
             return;
         }
@@ -24,6 +26,8 @@ var StreamsHandler = (function() {
     }
 
     function setHandlers(stream, syncAction, connection) {
+        console.info('- StreamsHandler.js 내부의 setHandlers 함수 실행됨 -');
+
         if (!stream || !stream.addEventListener) return;
 
         if (typeof syncAction == 'undefined' || syncAction == true) {
@@ -140,6 +144,8 @@ var StreamsHandler = (function() {
         if (startedTimes >= numberOfTimes) return;
 
         setTimeout(function() {
+            console.info('- StreamsHandler.js 내부의 afterEach 함수 안에서 setTimeout 실행됨 -');
+
             callback();
             afterEach(setTimeoutInteval, numberOfTimes, callback, startedTimes);
         }, setTimeoutInteval);

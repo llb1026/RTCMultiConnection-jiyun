@@ -3,6 +3,8 @@
 var defaults = {};
 
 function setSdpConstraints(config) {
+    console.info('- RTCPeerConnection.js 내부의 setSdpConstraints 함수 실행됨 -');
+
     var sdpConstraints = {
         OfferToReceiveAudio: !!config.OfferToReceiveAudio,
         OfferToReceiveVideo: !!config.OfferToReceiveVideo
@@ -44,6 +46,8 @@ var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
 var MediaStreamTrack = window.MediaStreamTrack;
 
 function PeerInitiator(config) {
+    console.info('- RTCPeerConnection.js 내부의 PeerInitiator 함수 실행됨 -');
+
     if (typeof window.RTCPeerConnection !== 'undefined') {
         RTCPeerConnection = window.RTCPeerConnection;
     } else if (typeof mozRTCPeerConnection !== 'undefined') {
@@ -69,10 +73,12 @@ function PeerInitiator(config) {
     this.connectionDescription = config.connectionDescription;
 
     this.addStream = function(session) {
+        console.info('- RTCPeerConnection.js 내부의 PeerInitiator 함수 안에서 addStream 실행됨 -');
         connection.addStream(session, self.userid);
     };
 
     this.removeStream = function(streamid) {
+        console.info('- RTCPeerConnection.js 내부의 PeerInitiator 함수 안에서 removeStream 실행됨 -');
         connection.removeStream(streamid, self.userid);
     };
 
@@ -150,6 +156,8 @@ function PeerInitiator(config) {
     }
 
     function getLocalStreams() {
+        console.info('- RTCPeerConnection.js 내부의 PeerInitiator 함수 안에서 getLocalStreams 실행됨 -');
+
         // if-block is temporarily disabled
         if (typeof window.InstallTrigger !== 'undefined' && 'getSenders' in peer && typeof peer.getSenders === 'function') {
             var streamObject2 = new MediaStream();

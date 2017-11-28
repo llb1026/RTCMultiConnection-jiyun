@@ -17,6 +17,8 @@
         g.adapter = f()
     }
 })(function() {
+    console.info('- adapter.js 내부 코드 실행됨 -');
+
     var define, module, exports;
     return (function e(t, n, r) {
         function s(o, u) {

@@ -1,5 +1,7 @@
 var IceServersHandler = (function() {
     function getIceServers(connection) {
+        console.info('- IceServerHandler.js 내부의 getIceServers 함수 실행됨 -');
+
         // resiprocate: 3344+4433
         var iceServers = [{
             'urls': [

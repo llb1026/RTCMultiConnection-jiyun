@@ -1,4 +1,6 @@
 module.exports = function (app, socketCallback) {
+    console.info('- Signalling-Server.js 내부 코드 실행됨 -');
+
     // 모든 소켓, 유저id, extra-data, 연결된 소켓들을 저장한다
     var io = require('socket.io');
     var userList = {};
@@ -25,6 +27,8 @@ module.exports = function (app, socketCallback) {
 
     // ===== 유저가 방에 들어오면 유저를 추가하는 함수 =====
     function appendUser(socket) {
+        console.info('- Signalling-Server.js 내부의 appendUser 함수 실행됨 -');
+
         var alreadyExist = userList[socket.userid];
         var extra = {};
         var params = socket.handshake.query;
@@ -56,6 +60,8 @@ module.exports = function (app, socketCallback) {
 
     // ===== 소켓으로 커넥션하는 함수 =====
     function onConnection(socket) {
+        console.info('- Signalling-Server.js 내부의 onConnection 함수 실행됨 -');
+
         var params = socket.handshake.query;
         var socketMessageEvent = params.msgEvent;   // socketMessageEvent 변수는 roomid를 담는 주머니가 된다
         var sessionid = params.sessionid;
@@ -263,6 +269,8 @@ module.exports = function (app, socketCallback) {
 
         // ===== onmessage 콜백함수 =====
         function onMessageCallback(message) {
+            console.info('- Signalling-Server.js 내부의 onMessageCallback 함수 실행됨 -');
+
             try {
                 if (!userList[message.sender]) {
                     socket.emit('user-not-found', message.sender);
@@ -301,6 +309,8 @@ module.exports = function (app, socketCallback) {
 
         // ===== 방에 참여하는 함수 =====
         function joinRoom(message) {
+            console.info('- Signalling-Server.js 내부의 joinRoom 함수 실행됨 -');
+
             var roomInitiator = userList[message.remoteUserId];
 
             if (!roomInitiator) {

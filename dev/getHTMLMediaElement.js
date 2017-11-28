@@ -1,4 +1,6 @@
 function getHTMLMediaElement(mediaElement, config) {
+    console.info('- getHTMLMediaElement.js 내부 코드 실행됨 -');
+
     config = config || {};
 
     if (!mediaElement.nodeName || (mediaElement.nodeName.toLowerCase() != 'audio' && mediaElement.nodeName.toLowerCase() != 'video')) {

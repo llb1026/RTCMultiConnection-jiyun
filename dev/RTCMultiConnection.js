@@ -4,6 +4,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
     // ===== 기본적인 소켓 커넥션 세팅 Start =====
     function SocketConnection(connection, connectCallback) {
+        console.info('- RTCMultiConnection.js 내부의 SocketConnection 함수 실행됨 -');
+
         var parameters = '';
 
         parameters += '?userid=' + connection.userid;
@@ -31,14 +33,14 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         }
 
         if (connection.socketURL.substr(connection.socketURL.length - 1, 1) != '/') {
-            // connection.socketURL = 'https://domain.com:3000/';
-            throw '"socketURL" MUST end with a slash.';
+            connection.socketURL = 'https://0.0.0.0:3000/demo/index.html';
+            // throw '"socketURL" MUST end with a slash.';
         }
 
         if (connection.socketURL == '/') {
-            console.info(location.origin + '/ 에 socket.io가 연결되었습니다');
+            console.info(location.origin + ' 에 socket.io가 연결되었습니다');
         } else {
-            console.info(connection.socketURL + '에 socket.io가 연결되었습니다');
+            console.info(connection.socketURL + ' 에 socket.io가 연결되었습니다');
         }
 
         try {
@@ -53,6 +55,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         var mPeer = connection.multiPeersHandler;
 
         connection.socket.on('extra-data-updated', function(remoteUserId, extra) {
+            console.info('- RTCMultiConnection.js 내부의 SocketConnection 함수 안에서 extra data 업데이트 실행됨 -');
+
             if (!connection.peers[remoteUserId]) return;
             connection.peers[remoteUserId].extra = extra;
 
@@ -350,6 +354,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
     // ===== 멀티유저 커넥션 세팅 Start =====
     function MultiPeers(connection) {
+        console.info('- RTCMultiConnection.js 내부의 MultiPeers 함수 실행됨 -');
+
         var self = this;
 
         var skipPeers = ['getAllParticipants', 'getLength', 'selectFirst', 'streams', 'send', 'forEach'];
@@ -853,6 +859,8 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
 
     // ===== RTCMultiConnection.js 기본 동작부분 Start =====
     (function(connection) {
+        console.info('- RTCMultiConnection.js 내부의 기본 동작부분 코드 실행됨 -');
+
         forceOptions = forceOptions || {
             useDefaultDevices: true
         };

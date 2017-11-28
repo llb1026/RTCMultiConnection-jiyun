@@ -1,7 +1,11 @@
 function TextReceiver(connection) {
+    console.info('- TextSenderReceiver.js 내부의 TextReceiver 함수 실행됨 -');
+
     var content = {};
 
     function receive(data, userid, extra) {
+        console.info('- TextSenderReceiver.js 내부의 TextReceiver 함수 안에서 receive 실행됨 -');
+
         // uuid is used to uniquely identify sending instance
         var uuid = data.uuid;
         if (!content[uuid]) {
@@ -47,6 +51,7 @@ function TextReceiver(connection) {
 }
 
 var TextSender = {
+    console.info('- TextSenderReceiver.js 내부의 TextSender 실행됨 -');
     send: function(config) {
         var connection = config.connection;
 

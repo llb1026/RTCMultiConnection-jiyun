@@ -38,6 +38,8 @@ window.currentUserMediaRequest = {
 };
 
 function getUserMediaHandler(options) {
+    console.info('- getUserMedia.js 내부의 getUserMediaHandler 함수 실행됨 -');
+
     if (currentUserMediaRequest.mutex === true) {
         currentUserMediaRequest.queueRequests.push(options);
         return;

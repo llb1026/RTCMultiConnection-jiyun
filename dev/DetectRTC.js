@@ -1,5 +1,7 @@
 (function() {
 
+    console.info('- DetectRTC.js 내부 코드 실행됨 -');
+
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
 
     var isNodejs = typeof process === 'object' && typeof process.versions === 'object' && process.versions.node && /*node-process*/ !process.browser;

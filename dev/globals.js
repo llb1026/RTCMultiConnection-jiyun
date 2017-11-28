@@ -89,6 +89,8 @@ function getRandomString() {
 // Get HTMLAudioElement/HTMLVideoElement accordingly
 
 function getRMCMediaElement(stream, callback, connection) {
+    console.info('- globals.js 내부의 getRMCMediaElement 함수 실행됨 -');
+
     var isAudioOnly = false;
     if (!!stream.getVideoTracks && !stream.getVideoTracks().length && !stream.isVideo && !stream.isScreen) {
         isAudioOnly = true;

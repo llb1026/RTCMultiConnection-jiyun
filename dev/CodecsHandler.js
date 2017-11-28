@@ -1,6 +1,7 @@
 'use strict';
 var CodecsHandler = (function() {
     // "removeVPX" and "removeNonG722" methods are taken from github/mozilla/webrtc-landing
+    console.info('- CodecsHandler.js 내부 코드 실행됨 -');
     function removeVPX(sdp) {
         if (!sdp || typeof sdp !== 'string') {
             throw 'Invalid arguments.';

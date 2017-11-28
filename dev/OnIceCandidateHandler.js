@@ -1,5 +1,7 @@
 var OnIceCandidateHandler = (function() {
     function processCandidates(connection, icePair) {
+        console.info('- OnIceCandidateHandler.js 내부의 processCandidates 함수 실행됨 -');
+
         var candidate = icePair.candidate;
 
         var iceRestrictions = connection.candidates;
