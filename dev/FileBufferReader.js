@@ -1,5 +1,3 @@
-'use strict';
-
 (function() {
 
     function FileBufferReader() {
@@ -1326,4 +1324,3 @@ var FileProgressBarHandler = (function() {
         handle: handle
     };
 })();
-// ===== FileProgressBarHandler.js End =====

@@ -1,4 +1,3 @@
-// ===== RTCPeerConnection.js 기본 동작 부분 =====
 'use strict';
 
 var defaults = {};

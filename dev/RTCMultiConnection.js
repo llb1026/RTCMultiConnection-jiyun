@@ -2445,5 +2445,4 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
             connection.join(roomid);
         };
     })(this);
-    // ===== RTCMultiConnection.js 기본 동작부분 Start =====
 };

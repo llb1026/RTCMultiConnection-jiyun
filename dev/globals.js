@@ -1,5 +1,3 @@
-// ===== globals.js =====
-
 if (typeof cordova !== 'undefined') {
     DetectRTC.isMobileDevice = true;
     DetectRTC.browser.name = 'Chrome';

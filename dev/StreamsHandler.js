@@ -1,5 +1,3 @@
-// ===== StreamsHandler.js =====
-
 var StreamsHandler = (function() {
     function handleType(type) {
         if (!type) {

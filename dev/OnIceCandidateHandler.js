@@ -1,5 +1,3 @@
-// ===== OnIceCandidateHandler.js =====
-
 var OnIceCandidateHandler = (function() {
     function processCandidates(connection, icePair) {
         var candidate = icePair.candidate;

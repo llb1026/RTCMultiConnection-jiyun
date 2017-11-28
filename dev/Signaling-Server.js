@@ -124,7 +124,7 @@ module.exports = function (app, socketCallback) {
             }
         });
 
-        // 누군가와 연결을 끊을
+        // 누군가와 연결을 끊을 때
         socket.on('disconnect-with', function(remoteUserId, callback) {
             try {
                 if (userList[socket.userid] && userList[socket.userid].connectedWith[remoteUserId]) {

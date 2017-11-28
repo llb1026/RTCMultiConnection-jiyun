@@ -1,5 +1,3 @@
-// ===== TextReceiver.js & TextSender.js =====
-
 function TextReceiver(connection) {
     var content = {};
 

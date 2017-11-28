@@ -1,6 +1,3 @@
-// ===== 현재 브라우저, 혹은 유저에게 웹캠이나 마이크가 있는지 탐지하는 DetectRTC =====
-'use strict';
-
 (function() {
 
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';

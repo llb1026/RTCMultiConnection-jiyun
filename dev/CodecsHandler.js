@@ -1,5 +1,3 @@
-// ===== CodecsHandler.js =====
-
 'use strict';
 var CodecsHandler = (function() {
     // "removeVPX" and "removeNonG722" methods are taken from github/mozilla/webrtc-landing

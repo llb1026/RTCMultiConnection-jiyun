@@ -1,5 +1,3 @@
-// ===== IceServersHandler.js Start =====
-
 var IceServersHandler = (function() {
     function getIceServers(connection) {
         // resiprocate: 3344+4433
@@ -31,4 +29,3 @@ var IceServersHandler = (function() {
         getIceServers: getIceServers
     };
 })();
-// ===== IceServersHandler.js End =====
